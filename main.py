@@ -78,6 +78,21 @@ def main():
     # # Create a sidebar dropdown box to select a video
     selected_video_title = st.sidebar.selectbox("Select a Video. Most recent at top", options=all_videos)
 
+    css = """
+    <style>
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+      }
+    </style>
+    """
+
+    st.write(css, unsafe_allow_html=True)
+
     if selected_video_title is not None:
 
         selected_video_id = selected_video_title
@@ -109,7 +124,7 @@ def main():
                 #print(message)
                 if '?' in message['message']:
                     image_url = next(image['url'] for image in message['author']['images'] if image['id'] == '32x32')
-                    st.markdown(f"<div><img src='{image_url}' alt='{message['author']['name']}'></img> <b>{message['author']['name']}</b> : {message['message']}</div>",unsafe_allow_html=True                                )
+                    st.markdown(f"<div><div class='avatar'><img src='{image_url}' alt='{message['author']['name']}'></img></div> <b>{message['author']['name']}</b> : {message['message']}</div>",unsafe_allow_html=True                                )
 
         except chat_downloader.errors.NoChatReplay:
             st.error('No Chat Replay for this Video')
