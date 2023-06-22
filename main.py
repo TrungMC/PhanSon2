@@ -19,7 +19,7 @@ def get_live_videos(channel_id, api_key):
     url = f"https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={channel_id}&eventType=live&type=video&key={api_key}"
     response = requests.get(url)
     data = response.json()
-    print(data)
+    #print(data)
     return data['items']
 
 
@@ -29,7 +29,7 @@ def get_past_streams(channel_id, api_key):
     items = []
     while True:
         response = requests.get(url + (f"&pageToken={next_page_token}" if next_page_token else ""))
-        print(response.content)
+        #print(response.content)
         data = response.json()
         items.extend(data['items'])
         next_page_token = data.get('nextPageToken')
@@ -42,6 +42,7 @@ def get_past_streams(channel_id, api_key):
 def export_chat_to_excel(chat_content):
     excel_lines=[]
     for message in chat_content:
+
         if '?' in message['message']:
             excel_lines.append([message['author']['name'],message['message']])
 
@@ -55,6 +56,11 @@ def export_chat_to_excel(chat_content):
 
     return excel_file
 
+# {'time_in_seconds': 4996.176, 'action_type': 'add_chat_item', 'message': 'không sao đâu phan sơn mọi người hiểu mà', 'message_id': 'ChwKGkNNaTlxZWpqMF84
+# Q0ZiekN3Z1FkdXo0RHdR', 'timestamp': 1687330465952199, 'time_text': '1:23:16', 'author': {'name': 'Nhuan Nguyen', 'images': [{'url': 'https://yt4.ggpht.c
+# om/ytc/AGIKgqPcobXNPeQK77zSEBul3kQeVJIr8CCsI38e-U4l84wWl7B6ablqzezVoGsI20ED', 'id': 'source'}, {'url': 'https://yt4.ggpht.com/ytc/AGIKgqPcobXNPeQK77zSEB
+# ul3kQeVJIr8CCsI38e-U4l84wWl7B6ablqzezVoGsI20ED=s32-c-k-c0x00ffffff-no-rj', 'width': 32, 'height': 32, 'id': '32x32'}, {'url': 'https://yt4.ggpht.com/ytc
+# /AGIKgqPcobXNPeQK77zSEBul3kQeVJIr8CCsI38e-U4l84wWl7B6ablqzezVoGsI20ED=s64-c-k-c0x00ffffff-no-rj', 'width': 64, 'height': 64, 'id': '64x64'}], 'id': 'UCOhU-eP4o6FilWm3Rrb1y8Q'}, 'message_type': 'text_message'}
 
 def main():
     st.title("Hỏi đáp giao lưu kênh Phan Sơn")
@@ -76,7 +82,7 @@ def main():
 
         selected_video_id = selected_video_title
         metadata = YouTube('https://www.youtube.com/watch?v=' + selected_video_id)
-        print(metadata.title)
+        #print(metadata.title)
         # Retrieve chat content for the selected video
         url = f'https://www.youtube.com/watch?v={selected_video_id}'
         try:
@@ -100,8 +106,10 @@ def main():
             st.subheader(metadata.title)
 
             for message in chat_replay:
+                #print(message)
                 if '?' in message['message']:
-                    st.markdown(f"<div>- <b>{message['author']['name']}</b>:{message['message']}</div>",unsafe_allow_html=True                                )
+                    image_url = next(image['url'] for image in message['author']['images'] if image['id'] == '32x32')
+                    st.markdown(f"<div><img src='{image_url}' alt='{message['author']['name']}'></img> <b>{message['author']['name']}</b> : {message['message']}</div>",unsafe_allow_html=True                                )
 
         except chat_downloader.errors.NoChatReplay:
             st.error('No Chat Replay for this Video')
