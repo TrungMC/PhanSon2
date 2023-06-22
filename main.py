@@ -101,7 +101,7 @@ def main():
 
             for message in chat_replay:
                 if '?' in message['message']:
-                    st.write(f"- {message['author']['name']}:{message['message']}")
+                    st.markdown(f"<div>- <b>{message['author']['name']}</b>:{message['message']}</div>",unsafe_allow_html=True                                )
 
         except chat_downloader.errors.NoChatReplay:
             st.error('No Chat Replay for this Video')
